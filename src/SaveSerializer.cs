@@ -5,6 +5,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using LobotomyCorpSaveManager.Exceptions;
+using LobotomyCorpSaveManager.Sephiroth;
 
 namespace LobotomyCorpSaveManager.SaveSerializer
 {
@@ -184,8 +185,8 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 
 			// Days data
 			ret["days"] = new JObject();
-			ret["days"]["current"] = this.GetDayRet(save["dayList"][currentDay]);
-			ret["days"]["memoryRepository"] = this.GetDayRet(save["dayList"][memoryRepositoryDay]);
+			ret["days"]["current"] = this.GetDayRet(save["dayList"][currentDay] as JObject);
+			ret["days"]["memoryRepository"] = this.GetDayRet(save["dayList"][memoryRepositoryDay] as JObject);
 
 			return ret;
 		}
