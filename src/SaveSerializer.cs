@@ -132,6 +132,29 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 		{
 		}
 
+		private class DayRetBuilder
+		{
+			private JObject ret;
+			private JObject save;
+
+			public DayRetBuilder(JObject save)
+			{
+				var sephiroth = new JObject();
+				foreach (Sephirah s in Sephirah.All)
+				{
+					sephiroth[s.ToLowerString()] = new JObject();
+				}
+				this.ret = new JObject();
+				this.ret["sephiroth"] = sephiroth;
+				this.save = save;
+			}
+
+			public JObject build()
+			{
+				return ret;
+			}
+		}
+
 		protected override JObject Reorganize(JObject save)
 		{
 			var ret = new JObject();
@@ -145,7 +168,17 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 				- "saveVer": Always "ver1".
 			*/
 
+			// Days data
+			ret["days"] = new JObject();
+			ret["days"]["current"] = this.GetDayRet(save["dayList"][currentDay]);
+			ret["days"]["memoryRepository"] = this.GetDayRet(save["dayList"][memoryRepositoryDay]);
+
 			return ret;
+		}
+
+		private JObject GetDayRet(JObject save)
+		{
+			return new DayRetBuilder(save).build();
 		}
 	}
 }
