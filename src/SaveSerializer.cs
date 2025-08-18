@@ -153,6 +153,20 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 			{
 				return ret;
 			}
+
+			/*
+				Ignored field(s):
+				- "saveInnerVer": Always "ver1".
+				- "saveState": Always "manage". See `LobotomyCorp save.md`.
+				- "playerData": Not necessary (substituted with "day").
+			*/
+			public DayRetBuilder AddBasicInfo()
+			{
+				this.ret["day"] = this.save["day"];
+				this.ret["lobPoints"] = this.save["money"]["money"];
+
+				return this;
+			}
 		}
 
 		protected override JObject Reorganize(JObject save)
