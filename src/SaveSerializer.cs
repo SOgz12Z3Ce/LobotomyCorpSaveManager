@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization.Formatters.Binary;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using LobotomyCorpSaveManager.Exceptions;
 
 namespace LobotomyCorpSaveManager.SaveSerializer
 {
@@ -31,6 +32,22 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 			string path = Path.Combine(currentDir, jsonFileName);
 			SerializeToJson(data, path);
 		}
+
+		public JObject Deserialize(string path)
+		{
+			string fileName = Path.GetFileName(path);
+			if (fileName == this.datFileName)
+			{
+				return this.Reorganize(this.DeserializeDat(path));
+			}
+			if (fileName == this.jsonFileName)
+			{
+				return this.DeserializeJson(path);
+			}
+			throw new BadFileException(string.Format("Expected \"{0}\" or \"{1}\", got \"{2}\".", this.datFileName, this.jsonFileName, fileName));
+		}
+		
+		protected abstract JObject Reorganize(JObject save);
 
 		private JObject DeserializeJson(string path)
 		{
