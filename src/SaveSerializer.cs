@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Runtime.Serialization.Formatters.Binary;
+using Newtonsoft.Json;
 
 namespace LobotomyCorpSaveManager.SaveSerializer
 {
@@ -21,12 +22,12 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 
 		// TODO: add func DeserializeJson
 
-		private Dictionary<string, object> DeserializeDat(string path)
+		private JObject DeserializeDat(string path)
 		{
 			FileStream stream = File.OpenRead(path);
-			var data = new BinaryFormatter().Deserialize(stream) as Dictionary<string, object>;
+			var data = new BinaryFormatter().Deserialize(stream);
 			stream.Close();
-			return data;
+			return JObject.FromObject(data);
 		}
 	}
 }
