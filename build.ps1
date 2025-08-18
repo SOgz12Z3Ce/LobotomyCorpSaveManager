@@ -1,1 +1,1 @@
-gmcs "../src/Main.cs" -out:"../bin/sog-lobsm.exe"
+gmcs "src/Main.cs" -out:"bin/sog-lobsm.exe"
