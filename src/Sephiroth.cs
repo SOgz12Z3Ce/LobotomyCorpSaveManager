@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using LobotomyCorpSaveManager.Exceptions;
 
 namespace LobotomyCorpSaveManager.Sephiroth
 {
@@ -66,6 +67,19 @@ namespace LobotomyCorpSaveManager.Sephiroth
 		{
 			return GameStringSephirahMap[s];
 		}
+		
+		public static int GetContainmentUnitIndexByGameEntryNodeId(string entryNodeId)
+		{
+			int ret = -1;
+			foreach (KeyValuePair<Sephirah, Dictionary<string, int>> kvp in ContainmentUnitIndexMap)
+			{
+				if (kvp.Value.TryGetValue(entryNodeId, out ret))
+				{
+					return ret;
+				}
+			}
+			throw new BadEntryNodeIdException(string.Format("\"{0}\" is not an entry node for containment unit."));
+		}
 
 		public static readonly Sephirah Malkuth = new Sephirah(SephirahType.Malkuth);
 		public static readonly Sephirah Yesod = new Sephirah(SephirahType.Yesod);
@@ -106,6 +120,117 @@ namespace LobotomyCorpSaveManager.Sephiroth
 			{ "Binah", Sephirah.Binah },
 			{ "Chokhmah", Sephirah.Hokma },
 			{ "Kether", Sephirah.Kether },
+		};
+		private static readonly Dictionary<Sephirah, Dictionary<string, int>> ContainmentUnitIndexMap = new Dictionary<Sephirah, Dictionary<string, int>>
+		{
+			{
+				Sephirah.Malkuth,
+				new Dictionary<string, int>
+				{
+					{ "left-upper-way5", 0 },
+					{ "right-upper-way4", 1 },
+					{ "left-down-way2", 2 },
+					{ "right-down-way2", 3 },
+				}
+			},
+			{
+				Sephirah.Yesod,
+				new Dictionary<string, int>
+				{
+					{ "T-left-way4", 0 },
+					{ "T-right-way4", 1 },
+					{ "T-leftdown-way3", 2 },
+					{ "T-rightdown-way3", 3 },
+				}
+			},
+			{
+				Sephirah.Hod,
+				new Dictionary<string, int>
+				{
+					{ "H-upper-way4", 0 },
+					{ "H-upper-way2", 1 },
+					{ "H-down-way4", 2 },
+					{ "H-down-way2", 3 },
+				}
+			},
+			{
+				Sephirah.Netzach,
+				new Dictionary<string, int>
+				{
+					{ "N-upper-way2", 0 },
+					{ "N-upper-way4", 1 },
+					{ "N-down-way2", 2 },
+					{ "N-down-way4", 3 },
+				}
+			},
+			{
+				Sephirah.Tiphereth,
+				new Dictionary<string, int>
+				{
+					{ "Tiphereth1-left-way2", 0 },
+					{ "Tiphereth1-left-way5", 1 },
+					{ "Tiphereth1-right-way3", 2 },
+					{ "Tiphereth1-right-way6", 3 },
+					{ "Tiphereth2-left-way2", 4 },
+					{ "Tiphereth2-left-way5", 5 },
+					{ "Tiphereth2-right-way3", 6 },
+					{ "Tiphereth2-right-way6", 7 },
+				}
+			},
+			{
+				Sephirah.Gebura,
+				new Dictionary<string, int>
+				{
+					{ "Geburah-rb-way2", 0 },
+					{ "Geburah-rb-way4", 1 },
+					{ "Geburah-ru-way2", 2 },
+					{ "Geburah-ru-way4", 3 },
+				}
+			},
+			{
+				Sephirah.Chesed,
+				new Dictionary<string, int>
+				{
+					{ "Chesed-rb-way4", 0 },
+					{ "Chesed-rb-way2", 1 },
+					{ "Chesed-ru-way4", 2 },
+					{ "Chesed-ru-way2", 3 },
+				}
+			},
+			{
+				Sephirah.Binah,
+				new Dictionary<string, int>
+				{
+					{ "binah-way3", 0 },
+					{ "binah-way4", 1 },
+					{ "binah-way5", 2 },
+					{ "binah-way6", 3 },
+				}
+			},
+			{
+				Sephirah.Hokma,
+				new Dictionary<string, int>
+				{
+					{ "chokhmah-way6", 0 },
+					{ "chokhmah-way5", 1 },
+					{ "chokhmah-way4", 2 },
+					{ "chokhmah-way3", 3 },
+				}
+			},
+			{
+				Sephirah.Kether,
+				new Dictionary<string, int>
+				{
+					{ "kether-leftway2", 0 },
+					{ "kether-rightway2", 1 },
+					{ "kether-leftway3", 2 },
+					{ "kether-rightway3", 3 },
+					{ "kether-leftway5", 4 },
+					{ "kether-rightway5", 5 },
+					{ "kether-leftway6", 6 },
+					{ "kether-rightway6", 7 },
+				}
+			},
 		};
 		private static readonly Dictionary<Sephirah, string> ToStringMap = new Dictionary<Sephirah, string>()
 		{
