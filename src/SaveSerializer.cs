@@ -124,5 +124,28 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 
 			return ret;
 		}
+
+		class MasterSaveSerializer : SaveSerializerBase
+		{
+			public MasterSaveSerializer() : base("saveData170808.dat", "master.json")
+			{
+			}
+
+			protected override JObject Reorganize(JObject save)
+			{
+				var ret = new JObject();
+
+				// Basic data
+				ret.Add("playtime", save["playTime"]);
+				int currentDay = save.Value<int>("lastDay");
+				int memoryRepositoryDay = save.Value<int>("checkPointDay");
+				/*
+					Ignored field(s):
+					- "saveVer": Always "ver1".
+				*/
+
+				return ret;
+			}
+		}
 	}
 }
