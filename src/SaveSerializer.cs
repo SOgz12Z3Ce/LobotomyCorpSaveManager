@@ -101,28 +101,28 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 
 			return ret;
 		}
+	}
 
-		class EtcSaveSerializer : SaveSerializerBase
+	class EtcSaveSerializer : SaveSerializerBase
+	{
+		public EtcSaveSerializer() : base("etc170808.dat", "etc.json")
 		{
-			public EtcSaveSerializer() : base("etc170808.dat", "etc.json")
-			{
-			}
+		}
 
-			protected override JObject Reorganize(Dictionary<string, object> save)
-			{
-				var ret = new JObject();
+		protected override JObject Reorganize(Dictionary<string, object> save)
+		{
+			var ret = new JObject();
 
-				ret.Add("isCoreSuppressionTutorialPlayed", save["sefirabossTutorialPlayed"]);
-				ret.Add("isCoreSuppressionTutorialPlayed", save["sefirabossTutorialPlayed"]);
-				ret.Add("isKetherCoreSuppression1Completed", save["e0"]);
-				ret.Add("isKetherCoreSuppression2Completed", save["e1"]);
-				ret.Add("isKetherCoreSuppression3Completed", save["e2"]);
-				ret.Add("isKetherCoreSuppression4Completed", save["e3"]);
-				ret.Add("isKetherCoreSuppression5Completed", save["e4"]);
-				ret.Add("extractedAbnormalitiesIdQueue", save["waitingCreature"]);
+			ret.Add("isCoreSuppressionTutorialPlayed", save["sefirabossTutorialPlayed"]);
+			ret.Add("isCoreSuppressionTutorialPlayed", save["sefirabossTutorialPlayed"]);
+			ret.Add("isKetherCoreSuppression1Completed", save["e0"]);
+			ret.Add("isKetherCoreSuppression2Completed", save["e1"]);
+			ret.Add("isKetherCoreSuppression3Completed", save["e2"]);
+			ret.Add("isKetherCoreSuppression4Completed", save["e3"]);
+			ret.Add("isKetherCoreSuppression5Completed", save["e4"]);
+			ret.Add("extractedAbnormalitiesIdQueue", save["waitingCreature"]);
 
-				return ret;
-			}
+			return ret;
 		}
 	}
 }
