@@ -109,7 +109,7 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 		{
 		}
 
-		protected override JObject Reorganize(Dictionary<string, object> save)
+		protected override JObject Reorganize(JObject save)
 		{
 			var ret = new JObject();
 
