@@ -92,12 +92,12 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 		{
 			var ret = new JObject();
 
-			ret.Add("masterVolume", save["masterVolume"]);
-			ret.Add("bgmVolume", save["bgmVolume"]);
-			ret.Add("enableTooltip", save["tooltip"]);
-			ret.Add("enableDlcAbnormalities", save["dlcCreatureOn"]);
-			ret.Add("logIndex", save["logIndex"]);
-			ret.Add("language", languageMap[save.Value<string>("language")]);
+			ret["masterVolume"] = save["masterVolume"]
+			ret["bgmVolume"] = save["bgmVolume"]
+			ret["enableTooltip"] = save["tooltip"]
+			ret["enableDlcAbnormalities"] = save["dlcCreatureOn"]
+			ret["logIndex"] = save["logIndex"]
+			ret["language"] = languageMap[save.Value<string>("language")]
 
 			return ret;
 		}
@@ -113,14 +113,14 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 		{
 			var ret = new JObject();
 
-			ret.Add("isCoreSuppressionTutorialPlayed", save["sefirabossTutorialPlayed"]);
-			ret.Add("isCoreSuppressionTutorialPlayed", save["sefirabossTutorialPlayed"]);
-			ret.Add("isKetherCoreSuppression1Completed", save["e0"]);
-			ret.Add("isKetherCoreSuppression2Completed", save["e1"]);
-			ret.Add("isKetherCoreSuppression3Completed", save["e2"]);
-			ret.Add("isKetherCoreSuppression4Completed", save["e3"]);
-			ret.Add("isKetherCoreSuppression5Completed", save["e4"]);
-			ret.Add("extractedAbnormalitiesIdQueue", save["waitingCreature"]);
+			ret["isCoreSuppressionTutorialPlayed"] = save["sefirabossTutorialPlayed"]
+			ret["isCoreSuppressionTutorialPlayed"] = save["sefirabossTutorialPlayed"]
+			ret["isKetherCoreSuppression1Completed"] = save["e0"]
+			ret["isKetherCoreSuppression2Completed"] = save["e1"]
+			ret["isKetherCoreSuppression3Completed"] = save["e2"]
+			ret["isKetherCoreSuppression4Completed"] = save["e3"]
+			ret["isKetherCoreSuppression5Completed"] = save["e4"]
+			ret["extractedAbnormalitiesIdQueue"] = save["waitingCreature"]
 
 			return ret;
 		}
@@ -137,7 +137,7 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 			var ret = new JObject();
 
 			// Basic data
-			ret.Add("playtime", save["playTime"]);
+			ret["playtime"] = save["playTime"]
 			int currentDay = save.Value<int>("lastDay");
 			int memoryRepositoryDay = save.Value<int>("checkPointDay");
 			/*
@@ -145,7 +145,7 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 				- "saveVer": Always "ver1".
 			*/
 
-				return ret;
+			return ret;
 		}
 	}
 }
