@@ -97,7 +97,7 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 			ret.Add("enableTooltip", save["tooltip"]);
 			ret.Add("enableDlcAbnormalities", save["dlcCreatureOn"]);
 			ret.Add("logIndex", save["logIndex"]);
-			ret.Add("language", languageMap[save["language"].ToString()]);
+			ret.Add("language", languageMap[save.Value<string>("language")]);
 
 			return ret;
 		}
