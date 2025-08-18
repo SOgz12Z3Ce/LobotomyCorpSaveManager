@@ -52,6 +52,21 @@ namespace LobotomyCorpSaveManager.Sephiroth
 			return this.ToString().ToLowerInvariant();
 		}
 
+		public static Sephirah GetSephirahByGameIndex(string indexStr)  // I hate PM.
+		{
+			return GetSephirahByGameIndex(int.Parse(indexStr));
+		}
+
+		public static Sephirah GetSephirahByGameIndex(int index)
+		{
+			return GameIndexSephirahMap[index - 1];
+		}
+
+		public static Sephirah GetSephirahByGameString(string s)
+		{
+			return GameStringSephirahMap[s];
+		}
+
 		public static readonly Sephirah Malkuth = new Sephirah(SephirahType.Malkuth);
 		public static readonly Sephirah Yesod = new Sephirah(SephirahType.Yesod);
 		public static readonly Sephirah Hod = new Sephirah(SephirahType.Hod);
@@ -63,6 +78,35 @@ namespace LobotomyCorpSaveManager.Sephiroth
 		public static readonly Sephirah Binah = new Sephirah(SephirahType.Binah);
 		public static readonly Sephirah Hokma = new Sephirah(SephirahType.Hokma);
 		public static readonly Sephirah Kether = new Sephirah(SephirahType.Kether);
+		private static readonly List<Sephirah> GameIndexSephirahMap = new List<Sephirah>()
+		{
+			Sephirah.Malkuth,
+			Sephirah.Netzach,
+			Sephirah.Hod,
+			Sephirah.Yesod,
+			Sephirah.Tiphereth,
+			Sephirah.Tiphereth,
+			Sephirah.Gebura,
+			Sephirah.Chesed,
+			Sephirah.Binah,
+			Sephirah.Hokma,
+			Sephirah.Kether,
+		};
+		private static readonly Dictionary<string, Sephirah> GameStringSephirahMap = new Dictionary<string, Sephirah>()
+		{
+			{ "Malkut", Sephirah.Malkuth },
+			{ "Yesod", Sephirah.Yesod },
+			{ "Hod", Sephirah.Hod },
+			{ "Netzach", Sephirah.Netzach },
+			{ "Tiphereth1", Sephirah.Tiphereth },
+			{ "Tiphereth2", Sephirah.Tiphereth },
+			{ "Geburah", Sephirah.Gebura },
+			{ "Chesed", Sephirah.Chesed },
+			{ "Daat", Sephirah.Daat },
+			{ "Binah", Sephirah.Binah },
+			{ "Chokhmah", Sephirah.Hokma },
+			{ "Kether", Sephirah.Kether },
+		};
 		private static readonly Dictionary<Sephirah, string> ToStringMap = new Dictionary<Sephirah, string>()
 		{
 			{ Sephirah.Malkuth, "Malkuth"},
