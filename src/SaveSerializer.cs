@@ -168,6 +168,21 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 
 				return this;
 			}
+
+			/*
+				Ignored field(s):
+				- "activated": Not necessary (Inferable, from "openLevel").
+			*/
+			public DayRetBuilder AddExpansionLevel()
+			{
+				foreach (KeyValuePair<string, JToken> kvp in this.save["sefiras"] as JObject)
+				{
+					var sephirah = Sephirah.GetSephirahByGameString(kvp.Key);
+					this.ret["sephiroth"][sephirah.ToLowerString()]["expansionLevel"] = kvp.Value["openLevel"];
+				}
+
+				return this;
+			}
 		}
 
 		protected override JObject Reorganize(JObject save)
