@@ -183,6 +183,51 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 
 				return this;
 			}
+
+			/*
+				Ignored field(s):
+				- "nextInstId": Not necessary (Inferable, from "creatureList").
+			*/
+			public DayRetBuilder AddAbnormalities()
+			{
+				foreach (Sephirah s in Sephirah.AllWithoutDaat)
+				{
+					this.ret["sephiroth"][s.ToLowerString()]["abnormalities"] = new JObject();
+				}
+				var Abnormalities = new Dictionary<Sephirah, Dictionary<string, object>[]>()
+				{
+					{ Sephirah.Malkuth, new Dictionary<string, object>[4] },
+					{ Sephirah.Yesod, new Dictionary<string, object>[4] },
+					{ Sephirah.Hod, new Dictionary<string, object>[4] },
+					{ Sephirah.Netzach, new Dictionary<string, object>[4] },
+					{ Sephirah.Tiphereth, new Dictionary<string, object>[8] },
+					{ Sephirah.Gebura, new Dictionary<string, object>[4] },
+					{ Sephirah.Chesed, new Dictionary<string, object>[4] },
+					{ Sephirah.Binah, new Dictionary<string, object>[4] },
+					{ Sephirah.Hokma, new Dictionary<string, object>[4] },
+					{ Sephirah.Kether, new Dictionary<string, object>[8] },
+				};
+
+				foreach (JToken abnormalitySave in this.save["creatures"]["creatureList"] as JArray)
+				{
+					var sephirah = Sephirah.GetSephirahByGameIndex(abnormalitySave.Value<string>("sefiraNum"));
+					int index = Sephirah.GetContainmentUnitIndexByGameEntryNodeId(abnormalitySave.Value<string>("entryNodeId"));
+					Abnormalities[sephirah][index] = new Dictionary<string, object>();
+					Abnormalities[sephirah][index]["id"] = abnormalitySave["metadataId"];
+					Abnormalities[sephirah][index]["index"] = abnormalitySave["instanceId"];
+				}
+				foreach (Sephirah s in Sephirah.AllWithoutDaat)
+				{
+					foreach (Dictionary<string, object> abnormality in Abnormalities[s])
+					{
+						if (abnormality == null) break;
+						var abnormalitiesList = this.ret["sephiroth"][s.ToLowerString()]["abnormalities"] as JArray;
+						abnormalitiesList.Add(abnormality);
+					}
+				}
+
+				return this;
+			}
 		}
 
 		protected override JObject Reorganize(JObject save)
