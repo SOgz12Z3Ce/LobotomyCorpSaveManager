@@ -65,4 +65,41 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 			return JObject.FromObject(data);
 		}
 	}
+
+	class SettingsSaveSerializer : SaveSerializerBase
+	{
+		static Dictionary<string, string> languageMap = new Dictionary<string, string>  // convert to BCP 47
+		{
+			{ "en",    "en" },
+			{ "kr",    "ko" },
+			{ "cn",    "zh-Hans" },
+			{ "cn_tr", "zh-Hant" },
+			{ "jp",    "ja" },
+			{ "ru",    "ru" },
+			{ "vn",    "vi" },  // Who is Misui? Check OptionUI.credit[4] and call OptionUI.OnSetLanguage("vn")!
+			{ "bg",    "bg" },
+			{ "es",    "es-419" },
+			{ "fr",    "fr" },
+			{ "pt_br", "pt-BR" },
+			{ "pt_pt", "pt-PT" },
+		};
+
+		public SettingsSaveSerializer() : base("Lobotomy170808state.dat", "settings.json")
+		{
+		}
+
+		protected override JObject Reorganize(JObject save)
+		{
+			var ret = new JObject();
+
+			ret.Add("masterVolume", save["masterVolume"]);
+			ret.Add("bgmVolume", save["bgmVolume"]);
+			ret.Add("enableTooltip", save["tooltip"]);
+			ret.Add("enableDlcAbnormalities", save["dlcCreatureOn"]);
+			ret.Add("logIndex", save["logIndex"]);
+			ret.Add("language", languageMap[save["language"].ToString()]);
+
+			return new JObject(ret);
+		}
+	}
 }
