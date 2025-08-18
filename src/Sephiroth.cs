@@ -42,6 +42,16 @@ namespace LobotomyCorpSaveManager.Sephiroth
 			return this.type.GetHashCode();
 		}
 
+		public override string ToString()
+		{
+			return ToStringMap[this];
+		}
+
+		public string ToLowerString()
+		{
+			return this.ToString().ToLowerInvariant();
+		}
+
 		public static readonly Sephirah Malkuth = new Sephirah(SephirahType.Malkuth);
 		public static readonly Sephirah Yesod = new Sephirah(SephirahType.Yesod);
 		public static readonly Sephirah Hod = new Sephirah(SephirahType.Hod);
@@ -53,6 +63,20 @@ namespace LobotomyCorpSaveManager.Sephiroth
 		public static readonly Sephirah Binah = new Sephirah(SephirahType.Binah);
 		public static readonly Sephirah Hokma = new Sephirah(SephirahType.Hokma);
 		public static readonly Sephirah Kether = new Sephirah(SephirahType.Kether);
+		private static readonly Dictionary<Sephirah, string> ToStringMap = new Dictionary<Sephirah, string>()
+		{
+			{ Sephirah.Malkuth, "Malkuth"},
+			{ Sephirah.Yesod, "Yesod"},
+			{ Sephirah.Hod, "Hod"},
+			{ Sephirah.Netzach, "Netzach"},
+			{ Sephirah.Tiphereth, "Tiphereth"},
+			{ Sephirah.Gebura, "Gebura"},
+			{ Sephirah.Chesed, "Chesed"},
+			{ Sephirah.Daat, "Daat"},
+			{ Sephirah.Binah, "Binah"},
+			{ Sephirah.Hokma, "Hokma"},
+			{ Sephirah.Kether, "Kether"},
+		};
 		public static readonly List<Sephirah> All = new List<Sephirah>()
 		{
 			Sephirah.Malkuth,
