@@ -1,0 +1,1 @@
+mono ./bin/sog-lobsm.exe
