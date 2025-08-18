@@ -99,7 +99,7 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 			ret.Add("logIndex", save["logIndex"]);
 			ret.Add("language", languageMap[save["language"].ToString()]);
 
-			return new JObject(ret);
+			return ret;
 		}
 	}
 }
