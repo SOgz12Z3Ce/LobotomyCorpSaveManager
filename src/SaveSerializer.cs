@@ -228,6 +228,28 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 
 				return this;
 			}
+
+			public DayRetBuilder AddAgents()
+			{
+				foreach (Sephirah s in Sephirah.AllWithoutDaat)
+				{
+					this.ret["sephiroth"][s.ToLowerString()]["agents"] = new JObject();
+				}
+
+				foreach (JToken agentSave in this.save["agent"]["agentList"] as JArray)
+				{
+					var sephirah = Sephirah.GetSephirahByGameIndex(agentSave.Value<string>("sefira"));
+					var sephirahAgents = this.ret["sephiroth"][sephirah.ToLowerString()]["agents"] as JArray;
+
+					var agentRet = new JObject();
+					agentRet["name"] = agentSave["name"];
+					agentRet["workFail"] = agentSave["history"]["workFail"];
+					//TODO: add rest data
+					sephirahAgents.Add(agentRet);
+				}
+
+				return this;
+			}
 		}
 
 		protected override JObject Reorganize(JObject save)
