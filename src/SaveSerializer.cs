@@ -275,7 +275,11 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 
 		private JObject GetDayRet(JObject save)
 		{
-			return new DayRetBuilder(save).build();
+			return new DayRetBuilder(save).AddBasicInfo()
+			                              .AddExpansionLevel()
+			                              .AddAbnormalities()
+			                              .AddAgents()
+			                              .build();
 		}
 	}
 }
