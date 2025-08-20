@@ -69,7 +69,7 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 
 	class SettingsSaveSerializer : SaveSerializerBase
 	{
-		static Dictionary<string, string> languageMap = new Dictionary<string, string>  // convert to BCP 47
+		static private Dictionary<string, string> languageMap = new Dictionary<string, string>  // convert to BCP 47
 		{
 			{ "en",    "en" },
 			{ "kr",    "ko" },
