@@ -11,10 +11,10 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 {
 	abstract class SaveSerializerBase
 	{
-		static JsonSerializerSettings jsonSettings = new JsonSerializerSettings()
-		{
-			ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-		};
+		// static JsonSerializerSettings jsonSettings = new JsonSerializerSettings()
+		// {
+		// 	ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+		// };
 		private readonly string datFileName;
 		private readonly string jsonFileName;
 
@@ -52,7 +52,7 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 			throw new BadFileException(string.Format("Expected \"{0}\" or \"{1}\", got \"{2}\".", this.datFileName, this.jsonFileName, fileName));
 		}
 		
-		protected abstract JObject Reorganize(JObject save);
+		protected abstract JObject Reorganize(Dictionary<string, object> rawSave);
 
 		private JObject DeserializeJson(string path)
 		{
@@ -62,12 +62,11 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 			return JObject.Parse(json);
 		}
 
-		private JObject DeserializeDat(string path)
+		private Dictionary<string, object> DeserializeDat(string path)
 		{
 			FileStream stream = File.OpenRead(path);
-			var data = new BinaryFormatter().Deserialize(stream);
-			stream.Close();
-			return JObject.FromObject(data, JsonSerializer.Create(jsonSettings));
+			var data = new BinaryFormatter().Deserialize(stream) as Dictionary<string, object>;
+			return data;
 		}
 	}
 
@@ -93,9 +92,10 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 		{
 		}
 
-		protected override JObject Reorganize(JObject save)
+		protected override JObject Reorganize(Dictionary<string, object> rawSave)
 		{
 			var ret = new JObject();
+			var save = JObject.FromObject(rawSave);
 
 			ret["masterVolume"] = save["masterVolume"];
 			ret["bgmVolume"] = save["bgmVolume"];
@@ -114,9 +114,10 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 		{
 		}
 
-		protected override JObject Reorganize(JObject save)
+		protected override JObject Reorganize(Dictionary<string, object> rawSave)
 		{
 			var ret = new JObject();
+			var save = JObject.FromObject(rawSave);
 
 			ret["isCoreSuppressionTutorialPlayed"] = save["sefirabossTutorialPlayed"];
 			ret["isCoreSuppressionTutorialPlayed"] = save["sefirabossTutorialPlayed"];
@@ -257,9 +258,20 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 			}
 		}
 
-		protected override JObject Reorganize(JObject save)
+		protected override JObject Reorganize(Dictionary<string, object> rawSave)
 		{
 			var ret = new JObject();
+			var days = rawSave["dayList"] as Dictionary<int, Dictionary<string, object>>;
+			foreach (KeyValuePair<int, Dictionary<string, object>> kvp in days)
+			{
+				var day = kvp.Value;
+				var abnormalities = day["creatures"] as Dictionary<string, object>;
+				foreach (Dictionary<string, object> abnormality in abnormalities["creatureList"] as List<Dictionary<string, object>>)
+				{
+					abnormality.Remove("basePosition");
+				}
+			}
+			var save = JObject.FromObject(rawSave);
 
 			// Basic data
 			ret["playtime"] = save["playTime"];
