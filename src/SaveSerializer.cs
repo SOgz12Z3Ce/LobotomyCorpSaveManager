@@ -11,6 +11,10 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 {
 	abstract class SaveSerializerBase
 	{
+		static JsonSerializerSettings jsonSettings = new JsonSerializerSettings()
+		{
+			ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+		};
 		private readonly string datFileName;
 		private readonly string jsonFileName;
 
@@ -63,7 +67,7 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 			FileStream stream = File.OpenRead(path);
 			var data = new BinaryFormatter().Deserialize(stream);
 			stream.Close();
-			return JObject.FromObject(data);
+			return JObject.FromObject(data, JsonSerializer.Create(jsonSettings));
 		}
 	}
 
@@ -192,37 +196,39 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 			{
 				foreach (Sephirah s in Sephirah.AllWithoutDaat)
 				{
-					this.ret["sephiroth"][s.ToLowerString()]["abnormalities"] = new JObject();
+					this.ret["sephiroth"][s.ToLowerString()]["abnormalities"] = new JArray();
 				}
-				var Abnormalities = new Dictionary<Sephirah, Dictionary<string, object>[]>()
+				var abnormalities = new Dictionary<Sephirah, Dictionary<string, int>[]>()
 				{
-					{ Sephirah.Malkuth, new Dictionary<string, object>[4] },
-					{ Sephirah.Yesod, new Dictionary<string, object>[4] },
-					{ Sephirah.Hod, new Dictionary<string, object>[4] },
-					{ Sephirah.Netzach, new Dictionary<string, object>[4] },
-					{ Sephirah.Tiphereth, new Dictionary<string, object>[8] },
-					{ Sephirah.Gebura, new Dictionary<string, object>[4] },
-					{ Sephirah.Chesed, new Dictionary<string, object>[4] },
-					{ Sephirah.Binah, new Dictionary<string, object>[4] },
-					{ Sephirah.Hokma, new Dictionary<string, object>[4] },
-					{ Sephirah.Kether, new Dictionary<string, object>[8] },
+					{ Sephirah.Malkuth, new Dictionary<string, int>[4] },
+					{ Sephirah.Yesod, new Dictionary<string, int>[4] },
+					{ Sephirah.Hod, new Dictionary<string, int>[4] },
+					{ Sephirah.Netzach, new Dictionary<string, int>[4] },
+					{ Sephirah.Tiphereth, new Dictionary<string, int>[8] },
+					{ Sephirah.Gebura, new Dictionary<string, int>[4] },
+					{ Sephirah.Chesed, new Dictionary<string, int>[4] },
+					{ Sephirah.Binah, new Dictionary<string, int>[4] },
+					{ Sephirah.Hokma, new Dictionary<string, int>[4] },
+					{ Sephirah.Kether, new Dictionary<string, int>[8] },
 				};
-
 				foreach (JToken abnormalitySave in this.save["creatures"]["creatureList"] as JArray)
 				{
+					if (abnormalitySave.Value<string>("sefiraNum") == "0") continue;  // TODO: handle backup agents
 					var sephirah = Sephirah.GetSephirahByGameIndex(abnormalitySave.Value<string>("sefiraNum"));
 					int index = Sephirah.GetContainmentUnitIndexByGameEntryNodeId(abnormalitySave.Value<string>("entryNodeId"));
-					Abnormalities[sephirah][index] = new Dictionary<string, object>();
-					Abnormalities[sephirah][index]["id"] = abnormalitySave["metadataId"];
-					Abnormalities[sephirah][index]["index"] = abnormalitySave["instanceId"];
+					abnormalities[sephirah][index] = new Dictionary<string, int>()
+					{
+						{ "id", (int)abnormalitySave.Value<long>("metadataId") },
+						{ "index", (int)abnormalitySave.Value<long>("instanceId") },
+					};
 				}
 				foreach (Sephirah s in Sephirah.AllWithoutDaat)
 				{
-					foreach (Dictionary<string, object> abnormality in Abnormalities[s])
+					var abnormalitiesList = this.ret["sephiroth"][s.ToLowerString()]["abnormalities"] as JArray;
+					foreach (Dictionary<string, int> abnormality in abnormalities[s])
 					{
 						if (abnormality == null) break;
-						var abnormalitiesList = this.ret["sephiroth"][s.ToLowerString()]["abnormalities"] as JArray;
-						abnormalitiesList.Add(abnormality);
+						abnormalitiesList.Add(JObject.FromObject(abnormality));
 					}
 				}
 
@@ -233,10 +239,10 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 			{
 				foreach (Sephirah s in Sephirah.AllWithoutDaat)
 				{
-					this.ret["sephiroth"][s.ToLowerString()]["agents"] = new JObject();
+					this.ret["sephiroth"][s.ToLowerString()]["agents"] = new JArray();
 				}
 
-				foreach (JToken agentSave in this.save["agent"]["agentList"] as JArray)
+				foreach (JToken agentSave in this.save["agents"]["agentList"] as JArray)
 				{
 					var sephirah = Sephirah.GetSephirahByGameIndex(agentSave.Value<string>("sefira"));
 					var sephirahAgents = this.ret["sephiroth"][sephirah.ToLowerString()]["agents"] as JArray;
@@ -244,7 +250,6 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 					var agentRet = new JObject();
 					agentRet["name"] = agentSave["name"];
 					agentRet["workFail"] = agentSave["history"]["workFail"];
-					//TODO: add rest data
 					sephirahAgents.Add(agentRet);
 				}
 
@@ -267,8 +272,8 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 
 			// Days data
 			ret["days"] = new JObject();
-			ret["days"]["current"] = this.GetDayRet(save["dayList"][currentDay] as JObject);
-			ret["days"]["memoryRepository"] = this.GetDayRet(save["dayList"][memoryRepositoryDay] as JObject);
+			ret["days"]["current"] = this.GetDayRet(save["dayList"][currentDay.ToString()] as JObject);
+			ret["days"]["memoryRepository"] = this.GetDayRet(save["dayList"][memoryRepositoryDay.ToString()] as JObject);
 
 			return ret;
 		}
