@@ -1,4 +1,7 @@
 using System;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using LobotomyCorpSaveManager.SaveSerializer;
 
 namespace LobotomyCorpSaveManager
 {
@@ -6,7 +9,8 @@ namespace LobotomyCorpSaveManager
 	{
 		static void Main(string[] args)
 		{
-			Console.WriteLine("Hello world!");
+			JObject settings = new SettingsSaveSerializer().Deserialize("../tests/saves/live/d50-NoMemoryRepository/Lobotomy170808state.dat");
+			Console.WriteLine(settings);
 		}
 	}
 }
