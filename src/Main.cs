@@ -9,7 +9,7 @@ namespace LobotomyCorpSaveManager
 	{
 		static void Main(string[] args)
 		{
-			JObject settings = new SettingsSaveSerializer().Deserialize("../tests/saves/live/d50-NoMemoryRepository/Lobotomy170808state.dat");
+			JObject settings = new SettingsSaveSerializer().Deserialize("tests/saves/live/d50-NoMemoryRepository/Lobotomy170808state.dat");
 			Console.WriteLine(settings);
 		}
 	}
