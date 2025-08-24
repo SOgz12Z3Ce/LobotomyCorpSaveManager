@@ -146,7 +146,7 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 			public DayRetBuilder(JObject save)
 			{
 				var sephiroth = new JObject();
-				foreach (Sephirah s in Sephirah.All)
+				foreach (Sephirah s in Sephirah.AllWithoutDaat)
 				{
 					sephiroth[s.ToLowerString()] = new JObject();
 				}
