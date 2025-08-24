@@ -9,9 +9,9 @@ namespace LobotomyCorpSaveManager
 	{
 		static void Main(string[] args)
 		{
-			JObject settingsSave = new SettingsSaveSerializer().Deserialize("tests/saves/live/d50-NoMemoryRepository/Lobotomy170808state.dat");
-			JObject etcSave = new EtcSaveSerializer().Deserialize("tests/saves/live/d50-NoMemoryRepository/Lobotomy/etc170808.dat");
-			JObject masterSave = new MasterSaveSerializer().Deserialize("tests/saves/live/d50-NoMemoryRepository/Lobotomy/saveData170808.dat");
+			JObject settingsSave = new SettingsSaveSerializer().Deserialize("tests/saves/live/Lobotomy170808state.dat");
+			JObject etcSave = new EtcSaveSerializer().Deserialize("tests/saves/live/Lobotomy/etc170808.dat");
+			JObject masterSave = new MasterSaveSerializer().Deserialize("tests/saves/live/Lobotomy/saveData170808.dat");
 
 			Console.WriteLine(settingsSave);
 			Console.WriteLine(etcSave);
