@@ -237,6 +237,40 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 				return this;
 			}
 
+			/*
+				Ignored field(s):
+				- "currentSefira": Not necessary (Inferable, from key).
+				- "sefira": Not necessary (Inferable, from key).
+				- "name": Not necessary (Inferable, from "customName" and "nameId").
+				- "baseMovement": Always 0.
+				- "baseMaxHp": Always 0.
+				- "baseMaxMental": Always 0.
+				- "isUniqueCredit": Not necessary (Inferable, from "customName").
+				- "uniqueScriptIndex": Not necessary (Inferable, from "customName").
+				- "isAce": Not necessary (Inferable, from all agents).
+				- "gifts":
+					- "giftTypeIdList": Not necessary (Inferable, from "lockState").
+				- "history":
+					- "workSuccess": Always 0.
+					- "physicalDamage": Always 0.
+					- "mentalDamage": Always 0.
+					- "deathByCreature": Always 0.
+					- "panicByCreature": Always 0.
+					- "deathByWorker": Always 0.
+					- "panic": Always 0.
+					- "creatureDamage": Always 0.
+					- "workerDamage": Always 0.
+					- "panicWorkerDamage": Always 0.
+					- "suppressDamage": Always 0.
+					- "disposition": Always 0.
+				- "spriteSet":
+					- "bInit": Always False.
+					- "AttachmentHair": Always {0, 0}.
+					- "EyeColor":
+						- "a": always 1.0.
+					- "HairColor":
+						- "a": always 1.0.
+			*/
 			public DayRetBuilder AddAgents()
 			{
 				foreach (Sephirah s in Sephirah.AllWithoutDaat)
@@ -250,12 +284,137 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 					var sephirahAgents = this.ret["sephiroth"][sephirah.ToLowerString()]["agents"] as JArray;
 
 					var agentRet = new JObject();
-					agentRet["name"] = agentSave["name"];
-					agentRet["workFail"] = agentSave["history"]["workFail"];
+
+					// basic info
+					agentRet["index"] = (int)agentSave.Value<long>("instanceId");
+					agentRet["continuousServiceDay"] = agentSave["continuousServiceDay"];
+
+					// stats
+					agentRet["stats"] = new JObject();
+					agentRet["stats"]["fortitude"] = agentSave["primaryStat"]["hp"];
+					agentRet["stats"]["prudence"] = agentSave["primaryStat"]["mental"];
+					agentRet["stats"]["temperance"] = agentSave["primaryStat"]["work"];
+					agentRet["stats"]["justice"] = agentSave["primaryStat"]["battle"];
+
+					// titles
+					agentRet["titles"] = new JObject();
+					agentRet["titles"]["primary"] = agentSave["prefix"];  // int, no cast
+					agentRet["titles"]["secondary"] = agentSave["suffix"];  // int, no cast
+
+					// egos
+					agentRet["egos"] = new JObject();
+					agentRet["egos"]["weapon"] = agentSave["weaponId"];
+					agentRet["egos"]["armor"] = agentSave["armorId"];
+					agentRet["egos"]["gifts"] = new JObject();
+
+					//// gifts
+					// TODO: How about a kiss? ;)
+					foreach (KeyValuePair<string, JToken> kvp in agentSave["gifts"]["lockState"] as JObject)
+					{
+						int partId = int.Parse(kvp.Key);
+						string typeIndex = (partId / 100).ToString();
+						string partIndex = (partId % 100).ToString();
+						if (agentRet["egos"]["gifts"][partIndex] == null)
+						{
+							agentRet["egos"]["gifts"][partIndex] = new JObject();
+						}
+						if (agentRet["egos"]["gifts"][partIndex][typeIndex] == null)
+						{
+							agentRet["egos"]["gifts"][partIndex][typeIndex] = new JObject();
+						}
+
+						agentRet["egos"]["gifts"][partIndex][typeIndex]["id"] = kvp.Value["id"];  // int, no cast
+						agentRet["egos"]["gifts"][partIndex][typeIndex]["isLocked"] = kvp.Value["state"];
+					}
+					foreach (KeyValuePair<string, JToken> kvp in agentSave["gifts"]["displayState"] as JObject)
+					{
+						int partId = int.Parse(kvp.Key);
+						string typeIndex = (partId / 100).ToString();
+						string partIndex = (partId % 100).ToString();
+						if (agentRet["egos"]["gifts"][partIndex] == null)  // These are necessary! Not all displayState composed to a gitf due to a bug! See `UnitEGOgiftSpace.ReleaseGift(EGOgiftModel) : void @06003662`
+						{
+							agentRet["egos"]["gifts"][partIndex] = new JObject();
+						}
+						if (agentRet["egos"]["gifts"][partIndex][typeIndex] == null)
+						{
+							agentRet["egos"]["gifts"][partIndex][typeIndex] = new JObject();
+						}
+
+						agentRet["egos"]["gifts"][partIndex][typeIndex]["isVisible"] = kvp.Value;
+					}
+
+					// history
+					agentRet["history"] = new JObject();
+					agentRet["history"]["dayCount"] = agentSave["history"]["historyworkDay"];
+					agentRet["history"]["InterruptedByPanicWorkCount"] = agentSave["history"]["workFail"];
+					// agentRet["history"]["promotionVal"] = agentSave["history"]["promotionVal"];  // TODO: Those poor guys remember how many day they ACTUALLY experienced by add 3 to this and add 6 to this somehow... Let's put this later.
+
+					//// PE-BOX
+					agentRet["history"]["pebox"] = new JObject();
+					agentRet["history"]["pebox"]["instinct"] = agentSave["history"]["workCubeCounts"]["R"];
+					agentRet["history"]["pebox"]["insight"] = agentSave["history"]["workCubeCounts"]["W"];
+					agentRet["history"]["pebox"]["attachment"] = agentSave["history"]["workCubeCounts"]["B"];
+					agentRet["history"]["pebox"]["repression"] = agentSave["history"]["workCubeCounts"]["P"];
+
+					// custom
+					agentRet["custom"] = new JObject();
+					agentRet["custom"]["isCustom"] = agentSave["iscustom"];
+
+					//// name
+					agentRet["custom"]["name"] = new JObject();
+					if (agentSave["customName"] != null)
+					{
+						agentRet["custom"]["name"]["customName"] = agentSave["customName"];
+					}
+					agentRet["custom"]["name"]["index"] = agentSave["nameId"];  // int, no cast
+					//// appearance
+					agentRet["custom"]["appearance"] = new JObject();
+					agentRet["custom"]["appearance"]["eyes"] = new JObject();
+					agentRet["custom"]["appearance"]["eyes"]["color"] = this.GetAppearanceColorRet(agentSave as JObject, "EyeColor");
+					agentRet["custom"]["appearance"]["eyes"]["normal"] = this.GetAppearanceSpriteRet(agentSave as JObject, "Eye");
+					agentRet["custom"]["appearance"]["eyes"]["close"] = this.GetAppearanceSpriteRet(agentSave as JObject, "EyeClose");
+					agentRet["custom"]["appearance"]["eyes"]["panic"] = this.GetAppearanceSpriteRet(agentSave as JObject, "EyePanic");
+					agentRet["custom"]["appearance"]["eyes"]["dead"] = this.GetAppearanceSpriteRet(agentSave as JObject, "EyeDead");
+					agentRet["custom"]["appearance"]["brow"] = new JObject();
+					agentRet["custom"]["appearance"]["brow"]["normal"] = this.GetAppearanceSpriteRet(agentSave as JObject, "EyeBrow");
+					agentRet["custom"]["appearance"]["brow"]["battle"] = this.GetAppearanceSpriteRet(agentSave as JObject, "BattleEyeBrow");
+					agentRet["custom"]["appearance"]["brow"]["panic"] = this.GetAppearanceSpriteRet(agentSave as JObject, "PanicEyeBrow");
+					agentRet["custom"]["appearance"]["mouth"] = new JObject();
+					agentRet["custom"]["appearance"]["mouth"]["normal"] = this.GetAppearanceSpriteRet(agentSave as JObject, "Mouth");
+					agentRet["custom"]["appearance"]["mouth"]["battle"] = this.GetAppearanceSpriteRet(agentSave as JObject, "BattleMouth");
+					agentRet["custom"]["appearance"]["mouth"]["panic"] = this.GetAppearanceSpriteRet(agentSave as JObject, "PanicMouth");
+					agentRet["custom"]["appearance"]["hair"] = new JObject();
+					agentRet["custom"]["appearance"]["hair"]["color"] = this.GetAppearanceColorRet(agentSave as JObject, "HairColor");
+					agentRet["custom"]["appearance"]["hair"]["frontHair"] = this.GetAppearanceSpriteRet(agentSave as JObject, "FrontHair");
+					agentRet["custom"]["appearance"]["hair"]["rearHair"] = this.GetAppearanceSpriteRet(agentSave as JObject, "RearHair");
+
 					sephirahAgents.Add(agentRet);
 				}
 
 				return this;
+			}
+
+			JObject GetAppearanceSpriteRet(JObject agentSave, string part)
+			{
+				var ret = new JObject();
+
+				// TODO: replace the secondary index to single index.
+				ret["srcIndex"] = (int)agentSave["spriteSet"][part].Value<long>("a");
+				ret["innerIndex"] = agentSave["spriteSet"][part]["b"];
+
+				return ret;
+			}
+			
+			JObject GetAppearanceColorRet(JObject agentSave, string part)
+			{
+				var ret = new JObject();
+
+				ret["r"] = agentSave["spriteSet"][part]["r"];
+				ret["g"] = agentSave["spriteSet"][part]["g"];
+				ret["b"] = agentSave["spriteSet"][part]["b"];
+				ret["a"] = 1.0;
+
+				return ret;
 			}
 		}
 
