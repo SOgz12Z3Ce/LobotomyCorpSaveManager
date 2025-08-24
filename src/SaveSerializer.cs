@@ -366,7 +366,7 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 					{
 						agentRet["custom"]["name"]["customName"] = agentSave["customName"];
 					}
-					agentRet["custom"]["name"]["index"] = agentSave["nameId"];  // int, no cast
+					agentRet["custom"]["name"]["id"] = agentSave["nameId"];  // int, no cast
 					//// appearance
 					agentRet["custom"]["appearance"] = new JObject();
 					agentRet["custom"]["appearance"]["eyes"] = new JObject();
