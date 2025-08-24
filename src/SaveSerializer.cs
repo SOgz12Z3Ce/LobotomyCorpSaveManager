@@ -155,7 +155,7 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 				this.save = save;
 			}
 
-			public JObject build()
+			public JObject Build()
 			{
 				return ret;
 			}
@@ -296,7 +296,7 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 			                              .AddExpansionLevel()
 			                              .AddAbnormalities()
 			                              .AddAgents()
-			                              .build();
+			                              .Build();
 		}
 	}
 }
