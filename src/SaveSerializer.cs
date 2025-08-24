@@ -183,6 +183,7 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 				foreach (KeyValuePair<string, JToken> kvp in this.save["sefiras"] as JObject)
 				{
 					var sephirah = Sephirah.GetSephirahByGameString(kvp.Key);
+					if (sephirah == Sephirah.Daat) continue;
 					this.ret["sephiroth"][sephirah.ToLowerString()]["expansionLevel"] = kvp.Value["openLevel"];
 				}
 
