@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using LobotomyCorpSaveManager.Exceptions;
 using LobotomyCorpSaveManager.Sephiroth;
+using LobotomyCorpSaveManager.Abnormalities;
 
 namespace LobotomyCorpSaveManager.SaveSerializer
 {
@@ -457,6 +458,102 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 			                              .AddAbnormalities()
 			                              .AddAgents()
 			                              .Build();
+		}
+	}
+
+	class GlobalSaveSerializer : SaveSerializerBase
+	{
+		public GlobalSaveSerializer() : base("saveGlobal170808.dat", "global.json")
+		{
+		}
+
+		private class RetBuilder
+		{
+			private JObject ret;
+			private JObject save;
+
+			public RetBuilder(JObject save)
+			{
+				this.save = save;
+				this.ret = new JObject();
+				this.ret["abnormalities"] = new JObject();
+				this.ret["trackers"] = new JObject();
+				this.ret["egos"] = new JObject();
+				this.ret["researches"] = new JObject();
+				this.ret["missions"] = new JObject();
+				this.ret["sephiroth"] = new JObject();
+			}
+
+			public JObject Build()
+			{
+				return this.ret;
+			}
+
+			private static JArray GetInfo(JObject abnormality)
+			{
+				var ret = new JArray();
+				for (int i = 0; abnormality["care_" + i] != null; i++)
+				{
+					ret.Add(abnormality["care_" + i]);
+				}
+				return ret;
+			}
+
+			public RetBuilder AddAbnormalities()
+			{
+				foreach (KeyValuePair<string, JToken> kvp in this.save["observe"]["observeList"] as JObject)
+				{
+					int id = int.Parse(kvp.Key);
+					string type = new Abnormality(id).Type;
+					var abnormality = kvp.Value as JObject;
+
+					this.ret["abnormalities"][id.ToString()] = new JObject();
+					var abnormalityRet = this.ret["abnormalities"][id.ToString()];
+
+					abnormalityRet["observationLevel"] = abnormality["observeProgress"];
+					
+					if (type == "normal")
+					{
+						abnormalityRet["pebox"] = abnormality["cubeNum"];
+						abnormalityRet["info"] = new JObject();
+						abnormalityRet["info"]["basic"] = abnormality["stat"];
+						abnormalityRet["info"]["escape"] = abnormality["defense"];
+						abnormalityRet["info"]["tips"] = RetBuilder.GetInfo(abnormality);
+						abnormalityRet["info"]["work"] = new JObject();
+						abnormalityRet["info"]["work"]["fortitude"] = abnormality["work_r"];
+						abnormalityRet["info"]["work"]["prudence"] = abnormality["work_w"];
+						abnormalityRet["info"]["work"]["temperance"] = abnormality["work_b"];
+						abnormalityRet["info"]["work"]["justice"] = abnormality["work_p"];
+					}
+					else if (type == "tool_channeled")
+					{
+						abnormalityRet["usageTime"] = abnormality["totalKitUseTime"];
+						// abnormalityRet["usageCount"] = abnormality["totalKitUseCount"];
+						abnormalityRet["info"] = RetBuilder.GetInfo(abnormality);
+					}
+					else if (type == "tool_equippable")
+					{
+						abnormalityRet["usageTime"] = abnormality["totalKitUseTime"];
+						abnormalityRet["usageCount"] = abnormality["totalKitUseCount"];
+						abnormalityRet["info"] = RetBuilder.GetInfo(abnormality);
+					}
+					else if (type == "tool_single")
+					{
+						abnormalityRet["usageCount"] = abnormality["totalKitUseCount"];
+						abnormalityRet["info"] = RetBuilder.GetInfo(abnormality);
+					}
+				}
+
+				return this;
+			}
+		}
+
+		protected override JObject Reorganize(Dictionary<string, object> rawSave)
+		{
+			var save = JObject.FromObject(rawSave);
+			
+			return new RetBuilder(save).AddAbnormalities()
+			                           .Build();
 		}
 	}
 }

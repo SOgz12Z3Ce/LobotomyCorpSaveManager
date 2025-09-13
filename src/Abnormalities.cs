@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Generic;
+using LobotomyCorpSaveManager.Exceptions;
 
-namespace Abnormalities
+namespace LobotomyCorpSaveManager.Abnormalities
 {
-	class Abnormalities
+	class Abnormality
 	{
-		static private List<int> all = [
+		static public List<int> All = new List<int> {
 			100000,
 			100001,
 			100002,
@@ -106,9 +108,9 @@ namespace Abnormalities
 			300108,
 			300109,
 			300110,			
-		];
+		};
 
-		static private List<int> tools = [
+		static public List<int> Tools = new List<int> {
 			300001,
 			300002,
 			300003,
@@ -126,11 +128,71 @@ namespace Abnormalities
 			300108,
 			300109,
 			300110
-		];
+		};
 
-		static public bool isTool(int id)
+		static public List<int> Channeled = new List<int> {
+			300003,
+			300004,
+			300006,
+			300101,
+			300105,
+		};
+
+		static public List<int> Equippable = new List<int> {
+			300001,
+			300002,
+			300106,
+			300107,
+			300109,
+		};
+
+		static public List<int> Single = new List<int> {
+			300005,
+			300007,
+			300102,
+			300103,
+			300104,
+			300108,
+			300110,
+		};
+
+		private readonly int id;
+
+		public bool IsTool
 		{
-			return Abnormalities.Contains(id);
+			get
+			{
+				return Abnormality.Tools.Contains(this.id);
+			}
+		}
+
+		public string Type  // Sin? Maybe.
+		{
+			get
+			{
+				if (!this.IsTool)
+				{
+					return "normal";
+				}
+				if (Abnormality.Channeled.Contains(this.id))
+				{
+					return "tool_channeled";
+				}
+				if (Abnormality.Equippable.Contains(this.id))
+				{
+					return "tool_equippable";
+				}
+				if (Abnormality.Single.Contains(this.id))
+				{
+					return "tool_single";
+				}
+				throw new UnreachableCodeException();
+			}
+		}
+
+		public Abnormality(int id)
+		{
+			this.id = id;
 		}
 	}
 }
