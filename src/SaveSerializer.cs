@@ -510,8 +510,6 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 					this.ret["abnormalities"][id.ToString()] = new JObject();
 					var abnormalityRet = this.ret["abnormalities"][id.ToString()];
 
-					abnormalityRet["observationLevel"] = abnormality["observeProgress"];
-					
 					if (type == "normal")
 					{
 						abnormalityRet["pebox"] = abnormality["cubeNum"];
