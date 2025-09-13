@@ -52,7 +52,7 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 			}
 			throw new BadFileException(string.Format("Expected \"{0}\" or \"{1}\", got \"{2}\".", this.datFileName, this.jsonFileName, fileName));
 		}
-		
+
 		protected abstract JObject Reorganize(Dictionary<string, object> rawSave);
 
 		private JObject DeserializeJson(string path)
@@ -405,7 +405,7 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 
 				return ret;
 			}
-			
+
 			JObject GetAppearanceColorRet(JObject agentSave, string part)
 			{
 				var ret = new JObject();
