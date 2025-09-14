@@ -499,6 +499,10 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 				return ret;
 			}
 
+			/*
+				Ignored field(s):
+				- "observeProgress": Not necessary (Inferable, See `Lobotomy save.md`).
+			*/
 			public RetBuilder AddAbnormalities()
 			{
 				foreach (KeyValuePair<string, JToken> kvp in this.save["observe"]["observeList"] as JObject)
@@ -541,6 +545,25 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 						abnormalityRet["info"] = RetBuilder.GetInfo(abnormality);
 					}
 				}
+
+				return this;
+			}
+
+			/*
+				Ignored field(s):
+				- "tutorialDone": Always false.
+				- "nextUnitInstanceId": Always 1.
+			*/
+			public RetBuilder AddTrackers()
+			{
+				this.ret["trackers"]["day1ClearCount"] = this.save["etcData"]["day1clearCount"];
+				// this.ret["trackers"]["isTutorialDone"] = this.save["etcData"]["tutorialDone"];
+				this.ret["trackers"]["farthestDay"] = this.save["etcData"]["unlockedMaxDay"];
+				this.ret["trackers"]["isEnding1Compeleted"] = this.save["etcData"]["ending1Done"];
+				this.ret["trackers"]["isEnding2Compeleted"] = this.save["etcData"]["ending2Done"];
+				this.ret["trackers"]["isEnding3Compeleted"] = this.save["etcData"]["ending3Done"];
+				this.ret["trackers"]["isTrueEndingCompeleted"] = this.save["etcData"]["trueEndingDone"];
+				
 
 				return this;
 			}
