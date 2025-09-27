@@ -582,11 +582,62 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 						this.ret["egos"]["info"][id]["count"] = 0;
 						this.ret["egos"]["info"][id]["index"] = new JArray();
 					}
-					
+
 					this.ret["egos"]["info"][id]["count"] = this.ret["egos"]["info"][id]["count"].Value<int>() + 1;
 					(this.ret["egos"]["info"][id]["index"] as JArray).Add(ego["equipInstanceId"]);
 				}
 				return this;
+			}
+
+			public RetBuilder AddResearches()
+			{
+				// There is a little room of improvement...
+				foreach (Sephirah s in Sephirah.All)
+				{
+					if (s == Sephirah.Kether || s == Sephirah.Daat)
+					{
+						continue;
+					}
+					this.ret["researches"][s.ToLowerString()] = new JArray { false, false, false };
+				}
+				Dictionary<int, tuple<string, int>> mp = {
+					{ 1, { "malkut", 0 } },
+					{ 2, { "malkut", 1 } },
+					{ 103, { "malkut", 2 } },
+
+					{ 3, { "yesod", 0 } },
+					{ 4, { "yesod", 1 } },
+					{ 5, { "yesod", 2 } },
+
+					{ 6, { "netzach", 0 } },
+					{ 7, { "netzach", 1 } },
+					{ 203, { "netzach", 2 } },
+
+					{ 8, { "hod", 0 } },
+					{ 9, { "hod", 1 } },
+					{ 10, { "hod", 2 } },
+
+					{ 501, { "tiphereth", 0 } },
+					{ 502, { "tiphereth", 1 } },
+					{ 503, { "tiphereth", 2 } },
+
+					{ 701, { "geburah", 0 } },
+					{ 702, { "geburah", 1 } },
+					{ 703, { "geburah", 2 } },
+
+					{ 801, { "chesed", 0 } },
+					{ 802, { "chesed", 1 } },
+					{ 803, { "chesed", 2 } },
+
+					{ 901, { "binah", 0 } },
+					{ 902, { "binah", 1 } },
+					{ 903, { "binah", 2 } },
+
+					{ 1001, { "chokhmah", 0 } },
+					{ 1002, { "chokhmah", 1 } },
+					{ 1003, { "chokhmah", 2 } }
+				};
+				
 			}
 		}
 
