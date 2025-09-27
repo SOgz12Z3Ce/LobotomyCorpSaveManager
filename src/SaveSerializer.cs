@@ -559,12 +559,33 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 				this.ret["trackers"]["day1ClearCount"] = this.save["etcData"]["day1clearCount"];
 				// this.ret["trackers"]["isTutorialDone"] = this.save["etcData"]["tutorialDone"];
 				this.ret["trackers"]["farthestDay"] = this.save["etcData"]["unlockedMaxDay"];
-				this.ret["trackers"]["isEnding1Compeleted"] = this.save["etcData"]["ending1Done"];
-				this.ret["trackers"]["isEnding2Compeleted"] = this.save["etcData"]["ending2Done"];
-				this.ret["trackers"]["isEnding3Compeleted"] = this.save["etcData"]["ending3Done"];
-				this.ret["trackers"]["isTrueEndingCompeleted"] = this.save["etcData"]["trueEndingDone"];
-				
+				this.ret["trackers"]["ending"] = new JObject();
+				this.ret["trackers"]["ending"]["isAEndingCompleted"] = this.save["etcData"]["ending1Done"];
+				this.ret["trackers"]["ending"]["isBEndingCompeleted"] = this.save["etcData"]["ending2Done"];
+				this.ret["trackers"]["ending"]["isCEndingCompeleted"] = this.save["etcData"]["ending3Done"];
+				this.ret["trackers"]["ending"]["isTrueEndingCompeleted"] = this.save["etcData"]["trueEndingDone"];
+				this.ret["trackers"]["ending"]["isHiddenEndingCompeleted"] = this.save["etcData"]["hiddenEndingDone"];
 
+				return this;
+			}
+
+			public RetBuilder AddEgos()
+			{
+				this.ret["egos"]["nextIndex"] = this.save["inventory"]["nextInstanceId"];
+				this.ret["egos"]["info"] = new JObject();
+				foreach (JToken ego in this.save["inventory"]["equips"])
+				{
+					string id = ego["equipTypeId"].Value<int>().ToString();
+					if (this.ret["egos"]["info"][id] == null)
+					{
+						this.ret["egos"]["info"][id] = new JObject();
+						this.ret["egos"]["info"][id]["count"] = 0;
+						this.ret["egos"]["info"][id]["index"] = new JArray();
+					}
+					
+					this.ret["egos"]["info"][id]["count"] = this.ret["egos"]["info"][id]["count"].Value<int>() + 1;
+					(this.ret["egos"]["info"][id]["index"] as JArray).Add(ego["equipInstanceId"]);
+				}
 				return this;
 			}
 		}
@@ -572,8 +593,10 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 		protected override JObject Reorganize(Dictionary<string, object> rawSave)
 		{
 			var save = JObject.FromObject(rawSave);
-			
+
 			return new RetBuilder(save).AddAbnormalities()
+			                           .AddTrackers()
+			                           .AddEgos()
 			                           .Build();
 		}
 	}
