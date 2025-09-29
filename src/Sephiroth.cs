@@ -273,5 +273,17 @@ namespace LobotomyCorpSaveManager.Sephiroth
 			Sephirah.Hokma,
 			Sephirah.Kether,
 		};
+		public static readonly List<Sephirah> AllWithoutDaatAndKether = new List<Sephirah>()
+		{
+			Sephirah.Malkuth,
+			Sephirah.Yesod,
+			Sephirah.Hod,
+			Sephirah.Netzach,
+			Sephirah.Tiphereth,
+			Sephirah.Gebura,
+			Sephirah.Chesed,
+			Sephirah.Binah,
+			Sephirah.Hokma,
+		};
 	}
 }
