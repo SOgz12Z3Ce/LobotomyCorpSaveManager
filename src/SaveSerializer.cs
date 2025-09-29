@@ -481,7 +481,6 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 				this.ret["egos"] = new JObject();
 				this.ret["researches"] = new JObject();
 				this.ret["missions"] = new JObject();
-				this.ret["sephiroth"] = new JObject();
 			}
 
 			public JObject Build()
@@ -711,7 +710,8 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 				foreach (Sephirah s in Sephirah.AllWithoutDaatAndKether)
 				{
 					this.ret["missions"][s.ToLowerString()] = new JArray();
-					for (int i = 0; i < 5; i++) {
+					for (int i = 0; i < 5; i++)
+					{
 						(this.ret["missions"][s.ToLowerString()] as JArray).Add("available");
 					}
 				}
