@@ -559,12 +559,11 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 				this.ret["trackers"]["day1ClearCount"] = this.save["etcData"]["day1clearCount"];
 				// this.ret["trackers"]["isTutorialDone"] = this.save["etcData"]["tutorialDone"];
 				this.ret["trackers"]["farthestDay"] = this.save["etcData"]["unlockedMaxDay"];
-				this.ret["trackers"]["ending"] = new JObject();
-				this.ret["trackers"]["ending"]["isAEndingCompleted"] = this.save["etcData"]["ending1Done"];
-				this.ret["trackers"]["ending"]["isBEndingCompeleted"] = this.save["etcData"]["ending2Done"];
-				this.ret["trackers"]["ending"]["isCEndingCompeleted"] = this.save["etcData"]["ending3Done"];
-				this.ret["trackers"]["ending"]["isTrueEndingCompeleted"] = this.save["etcData"]["trueEndingDone"];
-				this.ret["trackers"]["ending"]["isHiddenEndingCompeleted"] = this.save["etcData"]["hiddenEndingDone"];
+				this.ret["trackers"]["isAEndingCompleted"] = this.save["etcData"]["ending1Done"];
+				this.ret["trackers"]["isBEndingCompeleted"] = this.save["etcData"]["ending2Done"];
+				this.ret["trackers"]["isCEndingCompeleted"] = this.save["etcData"]["ending3Done"];
+				this.ret["trackers"]["isTrueEndingCompeleted"] = this.save["etcData"]["trueEndingDone"];
+				this.ret["trackers"]["isHiddenEndingCompeleted"] = this.save["etcData"]["hiddenEndingDone"];
 
 				return this;
 			}
