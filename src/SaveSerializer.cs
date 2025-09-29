@@ -599,44 +599,54 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 					}
 					this.ret["researches"][s.ToLowerString()] = new JArray { false, false, false };
 				}
-				Dictionary<int, tuple<string, int>> mp = {
-					{ 1, { "malkut", 0 } },
-					{ 2, { "malkut", 1 } },
-					{ 103, { "malkut", 2 } },
+				var mp = new Dictionary<int, List<object>>(){  // No tuple :(
+					{ 1, new List<object> { "malkuth", 0 } },
+					{ 2, new List<object> { "malkuth", 1 } },
+					{ 103, new List<object> { "malkuth", 2 } },
 
-					{ 3, { "yesod", 0 } },
-					{ 4, { "yesod", 1 } },
-					{ 5, { "yesod", 2 } },
+					{ 3, new List<object> { "yesod", 0 } },
+					{ 4, new List<object> { "yesod", 1 } },
+					{ 5, new List<object> { "yesod", 2 } },
 
-					{ 6, { "netzach", 0 } },
-					{ 7, { "netzach", 1 } },
-					{ 203, { "netzach", 2 } },
+					{ 6, new List<object> { "netzach", 0 } },
+					{ 7, new List<object> { "netzach", 1 } },
+					{ 203, new List<object> { "netzach", 2 } },
 
-					{ 8, { "hod", 0 } },
-					{ 9, { "hod", 1 } },
-					{ 10, { "hod", 2 } },
+					{ 8, new List<object> { "hod", 0 } },
+					{ 9, new List<object> { "hod", 1 } },
+					{ 10, new List<object> { "hod", 2 } },
 
-					{ 501, { "tiphereth", 0 } },
-					{ 502, { "tiphereth", 1 } },
-					{ 503, { "tiphereth", 2 } },
+					{ 501, new List<object> { "tiphereth", 0 } },
+					{ 502, new List<object> { "tiphereth", 1 } },
+					{ 503, new List<object> { "tiphereth", 2 } },
 
-					{ 701, { "geburah", 0 } },
-					{ 702, { "geburah", 1 } },
-					{ 703, { "geburah", 2 } },
+					{ 701, new List<object> { "gebura", 0 } },
+					{ 702, new List<object> { "gebura", 1 } },
+					{ 703, new List<object> { "gebura", 2 } },
 
-					{ 801, { "chesed", 0 } },
-					{ 802, { "chesed", 1 } },
-					{ 803, { "chesed", 2 } },
+					{ 801, new List<object> { "chesed", 0 } },
+					{ 802, new List<object> { "chesed", 1 } },
+					{ 803, new List<object> { "chesed", 2 } },
 
-					{ 901, { "binah", 0 } },
-					{ 902, { "binah", 1 } },
-					{ 903, { "binah", 2 } },
+					{ 901, new List<object> { "binah", 0 } },
+					{ 902, new List<object> { "binah", 1 } },
+					{ 903, new List<object> { "binah", 2 } },
 
-					{ 1001, { "chokhmah", 0 } },
-					{ 1002, { "chokhmah", 1 } },
-					{ 1003, { "chokhmah", 2 } }
+					{ 1001, new List<object> { "hokma", 0 } },
+					{ 1002, new List<object> { "hokma", 1 } },
+					{ 1003, new List<object> { "hokma", 2 } }
 				};
-				
+				foreach (JToken research in this.save["research"]["research"] as JArray)
+				{
+					int id = research["researchItemTypeId"].Value<int>();
+					if (id == 10000)
+					{
+						continue;
+					}
+					List<object> info = mp[id];
+					this.ret["researches"][info[0] as string][(int)info[1]] = research["curLevel"].Value<int>() == 1;
+				}
+				return this;
 			}
 		}
 
@@ -645,9 +655,10 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 			var save = JObject.FromObject(rawSave);
 
 			return new RetBuilder(save).AddAbnormalities()
-			                           .AddTrackers()
-			                           .AddEgos()
-			                           .Build();
+									   .AddTrackers()
+									   .AddEgos()
+									   .AddResearches()
+									   .Build();
 		}
 	}
 }
