@@ -648,6 +648,91 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 				}
 				return this;
 			}
+
+			public RetBuilder AddMissions()
+			{
+				var mp = new Dictionary<int, List<object>>()
+				{
+					{ 1, new List<object> { "malkuth", 0 } },
+					{ 2, new List<object> { "malkuth", 1 } },
+					{ 103, new List<object> { "malkuth", 2 } },
+					{ 104, new List<object> { "malkuth", 3 } },
+					{ 105, new List<object> { "malkuth", 4 } },
+
+					{ 3, new List<object> { "yesod", 0 } },
+					{ 4, new List<object> { "yesod", 1 } },
+					{ 5, new List<object> { "yesod", 2 } },
+					{ 404, new List<object> { "yesod", 3 } },
+					{ 405, new List<object> { "yesod", 4 } },
+
+					{ 8, new List<object> { "hod", 0 } },
+					{ 9, new List<object> { "hod", 1 } },
+					{ 10, new List<object> { "hod", 2 } },
+					{ 304, new List<object> { "hod", 3 } },
+					{ 305, new List<object> { "hod", 4 } },
+
+					{ 6, new List<object> { "netzach", 0 } },
+					{ 7, new List<object> { "netzach", 1 } },
+					{ 203, new List<object> { "netzach", 2 } },
+					{ 204, new List<object> { "netzach", 3 } },
+					{ 205, new List<object> { "netzach", 4 } },
+
+					{ 11, new List<object> { "tiphereth", 0 } },
+					{ 12, new List<object> { "tiphereth", 1 } },
+					{ 13, new List<object> { "tiphereth", 2 } },
+					{ 504, new List<object> { "tiphereth", 3 } },
+					{ 505, new List<object> { "tiphereth", 4 } },
+
+					{ 14, new List<object> { "gebura", 0 } },
+					{ 15, new List<object> { "gebura", 1 } },
+					{ 703, new List<object> { "gebura", 2 } },
+					{ 704, new List<object> { "gebura", 3 } },
+					{ 705, new List<object> { "gebura", 4 } },
+
+					{ 16, new List<object> { "chesed", 0 } },
+					{ 17, new List<object> { "chesed", 1 } },
+					{ 18, new List<object> { "chesed", 2 } },
+					{ 804, new List<object> { "chesed", 3 } },
+					{ 805, new List<object> { "chesed", 4 } },
+
+					{ 901, new List<object> { "binah", 0 } },
+					{ 902, new List<object> { "binah", 1 } },
+					{ 903, new List<object> { "binah", 2 } },
+					{ 904, new List<object> { "binah", 3 } },
+					{ 905, new List<object> { "binah", 4 } },
+
+					{ 1001, new List<object> { "hokma", 0 } },
+					{ 1002, new List<object> { "hokma", 1 } },
+					{ 1003, new List<object> { "hokma", 2 } },
+					{ 1004, new List<object> { "hokma", 3 } },
+					{ 1005, new List<object> { "hokma", 4 } },
+				};
+
+				foreach (Sephirah s in Sephirah.AllWithoutDaatAndKether)
+				{
+					this.ret["missions"][s.ToLowerString()] = new JArray();
+					for (int i = 0; i < 5; i++) {
+						(this.ret["missions"][s.ToLowerString()] as JArray).Add("available");
+					}
+				}
+
+				foreach (JToken mission in this.save["missions"]["missionsInProgress"] as JArray)
+				{
+					var info = mp[mission["metadataId"].Value<int>()];
+					this.ret["missions"][info[0] as string][(int)info[1]] = "inProgress";
+				}
+				foreach (JToken mission in this.save["missions"]["clearedMissions"] as JArray)
+				{
+					var info = mp[mission["metadataId"].Value<int>()];
+					this.ret["missions"][info[0] as string][(int)info[1]] = "completed";
+				}
+				foreach (JToken mission in this.save["missions"]["closedMissions"] as JArray)
+				{
+					var info = mp[mission["metadataId"].Value<int>()];
+					this.ret["missions"][info[0] as string][(int)info[1]] = "completed";
+				}
+				return this;
+			}
 		}
 
 		protected override JObject Reorganize(Dictionary<string, object> rawSave)
@@ -658,6 +743,7 @@ namespace LobotomyCorpSaveManager.SaveSerializer
 									   .AddTrackers()
 									   .AddEgos()
 									   .AddResearches()
+									   .AddMissions()
 									   .Build();
 		}
 	}
